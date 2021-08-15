@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-import os 
+import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
 
@@ -96,8 +96,8 @@ DATABASES = {
     #     'HOST': 'localhost',
     #     'PORT': '',
     # }
-    
-    
+
+
 }
 
 
@@ -161,7 +161,7 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 
 
-BASE_URL = 'http://127.0.0.1:8000/'
+BASE_URL = 'https://wsb.pythonanywhere.com/'
 
 
 

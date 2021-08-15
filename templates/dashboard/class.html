@@ -22,8 +22,8 @@
         margin: auto auto;
         overflow: auto;
     }
-    
-    
+
+
 </style>
 {% endblock css %}
 
@@ -39,13 +39,13 @@
         {% csrf_token %}
     </form>
     <button type="button" class="btn btn-danger ml-auto" onclick="deleteClass()" >
-        Delete Class 
+        Delete Class
     </button>
     <button type="button" class="btn btn-primary " style="margin-left: 10px;" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Add Student 
+        Add Student
     </button>
 </div>
-  
+
 <!--  Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog">
@@ -58,14 +58,14 @@
         <input type="hidden" name="type" value="student-add">
         {% csrf_token %}
         <div class="modal-body">
-            
+
             <div class="mb-3">
                 <select name="students" required class="form-select" multiple aria-label="multiple select example">
                     <option selected disabled >Students</option>
                     {% for student in students %}
                     {% if student not  in class.students.all %}
                     <option   value="{{student.id}}">{{student.student.first_name|capfirst}} {{student.student.last_name|capfirst}} {{student.id}}</option>
-                    {% endif %} 
+                    {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -94,7 +94,7 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
-        <th scope="col">Attended In This Month</th>
+        <!-- <th scope="col">Attended In This Month</th> -->
         <th scope="col">Action</th>
       </tr>
     </thead>
@@ -102,31 +102,31 @@
     {% load poll_extras  %}
 
         {% for student in class.students.all %}
-          
+
             <tr   style="cursor: pointer;">
                 <th scope="row">{{forloop.counter}}</th>
                 <td>{{student.student.first_name|capfirst}} {{student.student.last_name|capfirst}}</td>
-                <td>{{class.time}}</td>
+                <!-- <td>{{class.time}}</td> -->
                 <td>
-                    
+
                     <form  action="/dashboard/classes/{{class.id}}/" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="type" value="student-delete">
                         <input type="hidden" name="student-id" value="{{student.id}}">
                         <button type="submit" class="btn btn-danger btn-sm">Remove</button>
                     </form>
-                    
-                </td>          
+
+                </td>
             </tr>
-                        
-             
+
+
         {% endfor %}
-        
-      
+
+
     </tbody>
   </table>
 <div >
-    
+
 </div>
 
 

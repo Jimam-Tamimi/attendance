@@ -15,7 +15,7 @@ def generate_code():
 class Student(models.Model):
     student = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     timeStamp = models.DateTimeField(auto_now_add=True, blank=True)
-    
+
     def __str__(self):
         return str(self.student)
 
@@ -25,19 +25,19 @@ class Class(models.Model):
     time = models.TimeField("Class Time", blank=False)
     students = models.ManyToManyField(Student, blank=True, verbose_name="Students In This Class")
     timeStamp = models.DateTimeField(auto_now_add=True, blank=True)
-   
+
     def __str__(self):
         return str(self.name)
 
 
 
-  
+
 class Link(models.Model):
     class_name = models.ForeignKey(Class, on_delete=models.CASCADE, verbose_name="Class")
     token = models.CharField("Key", max_length=1024,  unique=True, blank=True)
     code = models.IntegerField("Code", unique=True, blank=True)
     timestamp = models.DateTimeField("Link Creation Time", auto_now_add=True)
-    expiry = models.DateTimeField("Expiry Date Time", blank=False, null=False)    
+    expiry = models.DateTimeField("Expiry Date Time", blank=False, null=False)
 
     def save(self,*args, **kwargs):
         token = ''
@@ -60,7 +60,7 @@ class Link(models.Model):
 
     def __str__(self):
         return str(self.class_name)
-    
+
 
 class Attendance(models.Model):
     student = models.ForeignKey(Student, verbose_name="Students", blank=False, on_delete=models.CASCADE)
@@ -68,10 +68,9 @@ class Attendance(models.Model):
     # attendance_time = models.TimeField("Attendance Time")
     attendance_date = models.DateField("Attendance Date", auto_now_add=True)
     attendance_time = models.TimeField("Attendance Time", auto_now_add=True)
-    link = models.ForeignKey(Link, on_delete=models.SET_DEFAULT, default='Deleted', blank=False, null=False)
+    link = models.ForeignKey(Link, on_delete=models.CASCADE, blank=False, null=False)
 
 
     def __str__(self):
         return str(self.student)
-    
-  
+

@@ -51,15 +51,15 @@ def links(request,  id=None):
                 print(e)
                 messages.error(request, 'Faild to create new link')
                 return redirect('/dashboard/links/')
-                
+
         else:
             messages.error(request, 'The class you have selected is not available')
             return redirect('/dashboard/links/')
-            
 
 
 
-        
+
+
     elif(request.method == 'GET'):
         all_links = Link.objects.all().order_by('-id')
         all_classes = Class.objects.all().order_by('-id')
@@ -84,13 +84,13 @@ def singleLink(request,  id=None):
             }
         else:
             return HttpResponseNotFound()
-        
+
         return render(request, 'dashboard/link.html', context)
-            
 
 
 
-        
+
+
     elif(request.method == 'GET'):
         all_links = Link.objects.all().order_by('-id')
         all_classes = Class.objects.all().order_by('-id')
@@ -101,7 +101,7 @@ def singleLink(request,  id=None):
         }
         return render(request, 'dashboard/links.html', context)
 
-    
+
 @staff_member_required
 def classes(request, id=None):
     if(id is not None):
@@ -138,9 +138,9 @@ def classes(request, id=None):
             messages.error(request, 'This class is not available')
             return redirect('/dashboard/classes/')
 
-            
-            
-            
+
+
+
     else:
         if(request.method == 'GET'):
             classes = Class.objects.all()
@@ -159,20 +159,20 @@ def classes(request, id=None):
                 student = Student.objects.get(id=id)
                 myClass.students.add(student)
             myClass.save()
-            messages.success(request, 'Class created successfully.')        
+            messages.success(request, 'Class created successfully.')
             return redirect('/dashboard/classes/')
-        
 
-    
+
+
 @staff_member_required
 def studentRequest(request):
     if(request.method == 'GET'):
         students = MyUser.objects.filter(is_student=False, is_staff=False, in_draft=False)
-        
+
         context = {
             'students':students
         }
-        
+
         return render(request, 'dashboard/student-requests.html', context)
     elif(request.method == 'POST'):
         action = request.POST['action']
@@ -190,8 +190,8 @@ def studentRequest(request):
                 return redirect('/dashboard/students/requests/')
             else:
                 messages.error(request, 'This student request is not available..')
-                return redirect('/dashboard/students/requests/')  
-                
+                return redirect('/dashboard/students/requests/')
+
         elif(action == 'reject'):
             user = MyUser.objects.filter(id=id)
             if(len(user) != 0):
@@ -203,7 +203,7 @@ def studentRequest(request):
                 return redirect('/dashboard/students/requests/')
             else:
                 messages.error(request, 'This student request is not available..')
-                return redirect('/dashboard/students/requests/')  
+                return redirect('/dashboard/students/requests/')
 
 
 
@@ -220,7 +220,7 @@ def students(request, id=None):
         context = {
             'students':studentList
         }
-        
+
         return render(request, 'dashboard/students.html', context)
     if(request.method == 'POST'):
         action = request.POST['action']
@@ -287,8 +287,8 @@ def attendance(request):
             month = request.GET['month']
             class_name = request.GET['class']
         except Exception as e:
-            print(e)  
-        if(myFilter is not None and month is not None and class_name is not None):
+            print(e)
+        if(myFilter is not None and month is not None and class_name is not None and myFilter is not '' and month is not '' and class_name is not '' ):
             myClass = Class.objects.filter(name=class_name).first()
             students = myClass.students.all()
             nowTime = timezone.now()
@@ -299,7 +299,7 @@ def attendance(request):
             for date in attendance_date:
                 if(date.attendance_date not in attendance_date_list):
                     attendance_date_list.append(date.attendance_date)
-            
+
             context = {
                 'students':students,
                 'attendance_date':attendance_date_list,
@@ -322,12 +322,12 @@ def attendance(request):
                 'time': f"{year}-{month}"
             }
             return render(request, 'dashboard/attendance.html', context)
-    
-       
+
+
 
 @staff_member_required
 def deleteAttendance(request,  attendanceId):
-    if(request.method == 'POST'):        
+    if(request.method == 'POST'):
         try:
             attendance = Attendance.objects.get(id=attendanceId)
             attendance.delete()

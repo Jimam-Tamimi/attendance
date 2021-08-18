@@ -1,3 +1,4 @@
+from account.models import ResetPassRequest
 from home.models import MyUser
 from django.core import exceptions
 from django.db import models
@@ -11,6 +12,7 @@ import datetime
 from django.utils import timezone
 from django.contrib import messages
 from json import loads
+
 
 # Create your views here.
 
@@ -77,29 +79,50 @@ def singleLink(request,  id=None):
         context = {}
         if(len(links) != 0):
             link = links.first()
+            students = link.class_name.students.all()
             attendance = Attendance.objects.filter(link=link).order_by('-id')
+            attend_student = []
+            for student in attendance:
+                attend_student.append(student.student)
+            attendance_p = round(len(attend_student) / len(students)  * 100)
             context = {
                 'link': link,
                 'attendance': attendance,
+                'attendance_p': attendance_p,
+                'students': students,
+                'class': link.class_name,
+                'attend_student': attend_student,
             }
+            print(context)
         else:
             return HttpResponseNotFound()
 
         return render(request, 'dashboard/link.html', context)
 
+    elif(request.method == 'POST'):
+        studentList = request.POST.getlist('students')
+        try:
+            link = Link.objects.get(id=id)
+        except Link.DoesNotExist:
+            messages.error(request, 'Link does not exist!!')
+            return redirect(request.path_info)
+
+        for studentId in studentList:
+            try:
+                student = Student.objects.get(id=studentId)
+            except Student.DoesNotExist:
+                messages.error(request, f"Student with id {student.student.id} was not found!!.")
+            try:
+                attendance = Attendance.objects.create(student=student,  link=link)
+                attendance.save()
+                messages.success(request, f"Your attendance for {student.student.first_name} {student.id} was added successfully.")
+            except Exception:
+                messages.error(request, f"Your attendance for {student.student.first_name} {student.id} was not added!!.")
+
+        return redirect(request.path_info)
 
 
 
-
-    elif(request.method == 'GET'):
-        all_links = Link.objects.all().order_by('-id')
-        all_classes = Class.objects.all().order_by('-id')
-        context = {
-            'links': all_links,
-            'classes': all_classes,
-            'attendance': Attendance.objects.all().order_by('-id'),
-        }
-        return render(request, 'dashboard/links.html', context)
 
 
 @staff_member_required
@@ -295,6 +318,7 @@ def attendance(request):
             datetime_object = datetime.datetime.strptime(month, '%Y-%m')
             print(datetime_object)
             attendance_date = Attendance.objects.filter(attendance_date__month=datetime_object.month, attendance_date__year=datetime_object.year, link__class_name=myClass).order_by('attendance_date')
+            attendance_students = []
             attendance_date_list = []
             for date in attendance_date:
                 if(date.attendance_date not in attendance_date_list):
@@ -308,6 +332,7 @@ def attendance(request):
                 'selectedMonth': month,
                 'filtered': True,
                 'myClass': myClass,
+                'attendance_students': attendance_students,
             }
             return render(request, 'dashboard/attendance.html', context)
         else:
@@ -336,5 +361,50 @@ def deleteAttendance(request,  attendanceId):
         except Exception as e:
             messages.error(request, 'This attendance is not available!!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@staff_member_required
+def resPassReq(request):
+    if(request.method == 'GET'):
+        resPassReqs = ResetPassRequest.objects.all().order_by('id')
+
+        for req in resPassReqs:
+            for req2 in resPassReqs.filter(user=req.user):
+                if(len(resPassReqs.filter(user=req.user)) != 1):
+                    req2.delete()
+                else:
+                    break
+        resPassReqs = ResetPassRequest.objects.all().order_by('-id')
+        
+                
+        context = {
+            'resPassReqs': resPassReqs
+        }
+        print(context)
+        return render(request, 'dashboard/reset-pass-req.html', context)        
+        
+    elif(request.method == 'POST'):
+        action = request.POST['action']
+        reqId = request.POST['id']
+        try:
+            resPassReq = ResetPassRequest.objects.get(id=reqId)
+        except ResetPassRequest.DoesNotExist:
+            messages.error(request, 'This request does not exist any more')
+            return redirect(request.path_info)
+        if(action == 'allow'):
+            new_pass = resPassReq.new_pass
+            try:
+                resPassReq.user.set_password(new_pass)
+                resPassReq.user.save()
+                resPassReq.delete()
+                messages.success(request, 'Password reset successfull')
+                return redirect(request.path_info)
+            except Exception as e:
+                print(e)            
+                messages.error(request, 'Password reset failed')
+                return redirect(request.path_info)
+
+            
+    
 
 

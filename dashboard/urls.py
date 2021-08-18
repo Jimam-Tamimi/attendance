@@ -15,5 +15,6 @@ urlpatterns = [
     path('students/draft/', views.studentDraft),
     path('attendance/', views.attendance),
     path('attendance/<int:attendanceId>/', views.deleteAttendance),
+    path('reset-password-request/', views.resPassReq),
 
 ]

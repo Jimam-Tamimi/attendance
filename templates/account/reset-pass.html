@@ -1,0 +1,35 @@
+{% extends 'account-base.html' %}
+
+{% block title %}Account | Login{% endblock title %}
+
+{% block content %}
+
+ <div class="container mt-4">
+    <h1 class="h3 mb-3 fw-normal"> Enter Your Email And New Password </h1>
+
+        <form action="/accounts/reset-password/" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email address</label>
+                <input  required name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Email Address"> 
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">New Password</label>
+                <input required  name="password" placeholder="New Password" type="password" class="form-control" id="exampleInputPassword1">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Confirm New Password</label>
+                <input required  name="cpassword" placeholder="Confirm New Password" type="password" class="form-control" id="exampleInputPassword1">
+            </div>
+
+            <div class="mb-3">
+                If you don't have an account, PLease <a href="/accounts/signup/" class="link-primary">Signup</a> First! <a href="/accounts/login/" class="link-primary">Login</a> 
+            </div>
+
+            <div class="d-grid gap-2">
+                <button name="login" class="btn btn-primary" type="submit">Request Reset Password</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}

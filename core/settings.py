@@ -27,12 +27,13 @@ SECRET_KEY = "django-insecure-=(zy06n7x=y#&rk4zb22jp^#l(upu5o6r18m=5s1(ernq#@^zx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["wsb-attendance.herokuapp.com", 'localhost', '*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'account',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +43,6 @@ INSTALLED_APPS = [
     'home',
     'api',
     'dashboard',
-    'account'
 ]
 
 MIDDLEWARE = [
@@ -151,13 +151,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # added by Jimam Tamimi
 
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'static',
-#     '/var/www/static/',
-# ]
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+    '/var/www/static/',
+]
 
 
-STATIC_ROOT = BASE_DIR / 'static'
+# STATIC_ROOT = BASE_DIR / 'static'
 
 
 
@@ -175,3 +175,5 @@ MESSAGE_TAGS = {
 
 TOKEN_LENGTH = 80
 CODE_LENGTH = 5
+
+

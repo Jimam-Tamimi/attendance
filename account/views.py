@@ -1,3 +1,4 @@
+from account.models import ResetPassRequest
 from django.http.response import HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from django.contrib import messages
@@ -94,3 +95,35 @@ def signup(request):
         else:
             return HttpResponseNotFound()
         
+def resetPass(request):
+    if(not request.user.is_authenticated):
+        if(request.method == 'GET'):
+            return render(request, 'account/reset-pass.html')
+        elif(request.method == 'POST'):
+            email = request.POST['email']
+            password = request.POST['password']
+            cpassword = request.POST['cpassword']
+            if(password == cpassword):
+                try:
+                    user = MyUser.objects.get(email=email)
+                except MyUser.DoesNotExist:
+                    messages.error(request, 'Email does not exist!!')
+                    return redirect('/accounts/reset-password/')
+                resPassReq = ResetPassRequest.objects.create(user=user, new_pass=password)
+                try:
+                    resPassReq.save()
+                    messages.success(request, 'Your request for reset password has been submited succesfully!!')
+                    return redirect('/accounts/login/')
+                except Exception as e:
+                    print(e)
+                    messages.error(request, 'Some Error Ocurred!!')
+                    return redirect('/accounts/reset-password/')
+                
+            else:
+                messages.error(request, 'Make sure password and confirm passwords are same!!')
+                return redirect('/accounts/reset-password/')
+    else:
+        return redirect('/')
+
+                
+                

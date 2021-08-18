@@ -115,7 +115,6 @@ def resetPass(request):
                     messages.success(request, 'Your request for reset password has been submited succesfully!!')
                     return redirect('/accounts/login/')
                 except Exception as e:
-                    print(e)
                     messages.error(request, 'Some Error Ocurred!!')
                     return redirect('/accounts/reset-password/')
                 

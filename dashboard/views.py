@@ -26,13 +26,11 @@ def dashboard(request):
 @staff_member_required
 def links(request,  id=None):
     if(request.method == 'POST'):
-        print('in1')
         class_name = request.POST['class']
         expiry = int(request.POST['expiry'])
         time = request.POST['time'].lower()
         class_name = Class.objects.filter(name=class_name).order_by('-id')
         if(len(class_name) != 0):
-            print('in2')
 
             if(time == 'seconds'):
                 expiry = timezone.now() + timedelta(seconds=expiry)
@@ -47,10 +45,8 @@ def links(request,  id=None):
                 link.save()
                 expiry_time = request.POST['expiry']
                 messages.success(request, f"Successfully created a new link for  {expiry_time} {time}.")
-                print('in3')
                 return redirect('/dashboard/links/')
             except Exception as e:
-                print(e)
                 messages.error(request, 'Faild to create new link')
                 return redirect('/dashboard/links/')
 
@@ -93,7 +89,6 @@ def singleLink(request,  id=None):
                 'class': link.class_name,
                 'attend_student': attend_student,
             }
-            print(context)
         else:
             return HttpResponseNotFound()
 
@@ -235,7 +230,6 @@ def studentRequest(request):
 def students(request, id=None):
     if(request.method == 'GET'):
         students = Student.objects.all()
-        print(students)
         studentList = []
         for student in students:
             if(student.student in MyUser.objects.filter(is_active=True, is_student=True, in_draft=False)):
@@ -274,7 +268,6 @@ def studentDraft(request):
         context = {
             'students':students
         }
-        print(context)
         return render(request, 'dashboard/draft.html', context)
     elif(request.method == 'POST'):
         action = request.POST['action']
@@ -310,13 +303,12 @@ def attendance(request):
             month = request.GET['month']
             class_name = request.GET['class']
         except Exception as e:
-            print(e)
+            pass
         if(myFilter is not None and month is not None and class_name is not None and myFilter is not '' and month is not '' and class_name is not '' ):
             myClass = Class.objects.filter(name=class_name).first()
             students = myClass.students.all()
             nowTime = timezone.now()
             datetime_object = datetime.datetime.strptime(month, '%Y-%m')
-            print(datetime_object)
             attendance_date = Attendance.objects.filter(attendance_date__month=datetime_object.month, attendance_date__year=datetime_object.year, link__class_name=myClass).order_by('attendance_date')
             attendance_students = []
             attendance_date_list = []
@@ -380,7 +372,6 @@ def resPassReq(request):
         context = {
             'resPassReqs': resPassReqs
         }
-        print(context)
         return render(request, 'dashboard/reset-pass-req.html', context)        
         
     elif(request.method == 'POST'):
@@ -400,7 +391,6 @@ def resPassReq(request):
                 messages.success(request, 'Password reset successfull')
                 return redirect(request.path_info)
             except Exception as e:
-                print(e)            
                 messages.error(request, 'Password reset failed')
                 return redirect(request.path_info)
 

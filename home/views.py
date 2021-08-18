@@ -44,7 +44,6 @@ def editProfile(request):
                 'number': user.number,
                 'addNumber': user.addtional_number,
             }
-            print(context)
             return render(request, 'home/edit-profile.html', context)
 
         elif(request.method == 'POST'):
